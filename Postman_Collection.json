@@ -1,0 +1,297 @@
+{
+  "info": {
+    "name": "Gestor Abogados API",
+    "description": "Colección de Postman para la API de Gestor de Abogados",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', jsonData.data.token);",
+                  "    pm.test('Login successful', function () {",
+                  "        pm.expect(jsonData.status).to.eql('success');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Operator",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"operator\",\n  \"password\": \"operator123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Abogados",
+      "item": [
+        {
+          "name": "Crear Abogado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carlos Pérez\",\n  \"email\": \"carlos.perez@example.com\",\n  \"phone\": \"3001234567\",\n  \"specialization\": \"Laboral\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lawyers",
+              "host": ["{{base_url}}"],
+              "path": ["lawyers"]
+            }
+          }
+        },
+        {
+          "name": "Listar Abogados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lawyers?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["lawyers"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Abogado por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lawyers/550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["lawyers", "550e8400-e29b-41d4-a716-446655440001"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Demandas",
+      "item": [
+        {
+          "name": "Crear Demanda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"case_number\": \"DEM-2025-011\",\n  \"plaintiff\": \"Empresa XYZ\",\n  \"defendant\": \"Juan Rodríguez\",\n  \"case_type\": \"labor\",\n  \"status\": \"pending\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lawsuits",
+              "host": ["{{base_url}}"],
+              "path": ["lawsuits"]
+            }
+          }
+        },
+        {
+          "name": "Listar Demandas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lawsuits",
+              "host": ["{{base_url}}"],
+              "path": ["lawsuits"]
+            }
+          }
+        },
+        {
+          "name": "Filtrar Demandas por Estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lawsuits?status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["lawsuits"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar Demandas por Abogado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lawsuits?lawyer_id=550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["lawsuits"],
+              "query": [
+                {
+                  "key": "lawyer_id",
+                  "value": "550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Asignar Abogado a Demanda",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lawyer_id\": \"550e8400-e29b-41d4-a716-446655440001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lawsuits/LAWSUIT_ID/assign",
+              "host": ["{{base_url}}"],
+              "path": ["lawsuits", "LAWSUIT_ID", "assign"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reportes",
+      "item": [
+        {
+          "name": "Demandas por Abogado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reports/lawyers/550e8400-e29b-41d4-a716-446655440001/lawsuits",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "lawyers", "550e8400-e29b-41d4-a716-446655440001", "lawsuits"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utilidades",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
